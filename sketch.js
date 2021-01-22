@@ -4,13 +4,17 @@ const GRIDSIZE = 20;
 const grid = new Array();
 
 // Pathfinding Variables
-frontier = new PriorityQueue();
-costs = {};
-parents = {};
 
+// A* search variables
+const frontier = new PriorityQueue();
+const costs = {};
+const parents = {};
+
+// DFS (or general) search variables
 const directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const stack = [];
-let winner = false;
+let finished = false;
+let pathExists = false;
 let currCell = null;
 
 let start = end = null;
@@ -19,19 +23,25 @@ let start = end = null;
 function setup() {
     createCanvas(2000, 2000);
     initGrid();
-    frameRate(5);
+    frameRate(30);
 
     chooseEnds();
-    console.log(grid);
+    //console.log(grid);
 }
 
 function draw() {
-    if (!winner) {
+    if (!finished) {
         searchAStar(goal);
     } else {
-        console.log('yay!');
+        //console.log('finished!');
+        if (pathExists) {
+            colorPath(goal);
+        } else {
+            console.log('No path exists!');
+        }
+
         noLoop();
-        colorPath(goal);
+        
     }
 
     displayGrid();
@@ -41,6 +51,7 @@ function draw() {
 function displayGrid() {
     for (i = 0; i < GRIDSIZE; i++) {
         for (j = 0; j < GRIDSIZE; j++) {
+            grid[i][j].increaseStage();
             grid[i][j].display();
         }
     }
@@ -64,7 +75,6 @@ function initGrid() {
 function chooseEnds() {
     stack.push(grid[2][3]);
 
-    grid[1][2].setTraversed(false);
     grid[2][3].setStart();
     grid[10][10].setEnd();
     goal = grid[10][10];
@@ -75,17 +85,20 @@ function chooseEnds() {
     frontier.push(start, 0);
 }
 
+
+/* SEARCH FUNCTIONS */
 function dfs() {
     if (stack.length == 0) {
         // the node is unreachable (we've exhausted all of our options)
-        winner = true;
+        finished = true;
         return null;
     }
 
     currCell = stack.pop();
 
     if (currCell.isEnd) {
-        winner = true;
+        finished = true;
+        pathExists = true;
         return null;
     }
 
@@ -104,46 +117,63 @@ function dfs() {
 }
 
 function searchAStar(end) {
-    while (frontier.length() > 0) {
-        const q = frontier.pop();
+    if (frontier.length() == 0) {
+        finished = true;
+        return null;
+    }
 
-        if (q.toString() == end.toString()) {
-            winner = true;
-            return costs[q.toString()];
-        }
+    const q = frontier.pop();
 
-        for (let i = 0; i < directions.length; i++) {
-            const newX = directions[i][0] + q.x;
-            const newY = directions[i][1] + q.y;
+    if (q.toString() == end.toString()) {
+        finished = true;
+        pathExists = true;
+        return costs[q.toString()];
+    }
 
-            if ( (0 <= newX) && (newX < GRIDSIZE) && (0 <= newY) && (newY < GRIDSIZE) ) {
-                const successor = grid[newY][newX];
+    for (let i = 0; i < directions.length; i++) {
+        const newX = directions[i][0] + q.x;
+        const newY = directions[i][1] + q.y;
 
-                // todo: if successor in closed then skip
+        if ( (0 <= newX) && (newX < GRIDSIZE) && (0 <= newY) && (newY < GRIDSIZE) ) {
+            const successor = grid[newY][newX];
 
-                newCost = costs[q.toString()] + 1; // todo: underlying graph costs data structure
+            // todo: if successor in closed then skip
 
-                if ( (!(successor.toString() in costs) || (newCost < costs[successor.toString()]))
-                        && (!successor.isWall) ) {
-                    costs[successor.toString()] = newCost;
-                    priority = newCost + manhattanDistance([newX, newY], [end.x, end.y]);
-                    frontier.push(successor, priority);
-                    parents[successor.toString()] = q;
-                } 
-            }
+            newCost = costs[q.toString()] + 1; // todo: underlying graph costs data structure
+
+            if ( (!(successor.toString() in costs) || (newCost < costs[successor.toString()]))
+                    && (!successor.isWall) ) {
+                costs[successor.toString()] = newCost;
+                priority = newCost + manhattanDistance([newX, newY], [end.x, end.y]);
+                frontier.push(successor, priority);
+                parents[successor.toString()] = q;
+                q.setTraversed(false);
+            } 
         }
     }
 }
 
 function colorPath(node) {
-    console.log(node);
-    if ( (node == null) || (!(node.toString() in parents)) ) {
-        return null;
-    }
+    let curr = node;
 
-    node.setTraversed(false);
-    colorPath(parents[node.toString()]);
+    while (curr != null) {
+        if (!(curr.toString() in parents)) {
+            throw Error("Not a valid path", "coordinates:", curr);
+        }
+
+        curr.setPath(true);
+        curr = parents[curr.toString()];
+    }
 }
+
+function increaseStages() {
+    for (i = 0; i < GRIDSIZE; i++) {
+        for (j = 0; j < GRIDSIZE; j++) {
+            grid[i][j].increaseStage();
+        }
+    }
+}
+/* HEURISTIC FUNCTIONS (for A* search) */
 function euclideanDistance(start, end) {
     x0 = start[0], x1 = end[0];
     y0 = start[1], y1 = end[1];

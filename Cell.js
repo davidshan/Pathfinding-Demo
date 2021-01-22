@@ -4,7 +4,9 @@ class Cell {
         this.offsetY = offsetY;
         this.size = size;
         this.traversable = traversable;
+        this.path = false;
         this.isWall = Math.random() < 0.3;
+        this.stage = 0;
 
         this.isStart = false;
         this.isEnd = false;
@@ -12,16 +14,23 @@ class Cell {
         this.x = offsetX / Math.floor(size);
         this.y = offsetY / Math.floor(size);
 
+        this.currentColour = Cell.stages[0];
+
         // TODO: error checking
     }
 
     static stages = {
-        1: [0, 0, 255, 0.9],
-        10: [0, 0, 255, 0.7],
-        20: [0, 0, 255, 0.5],
-        30: [0, 0, 255, 0.3],
-        50: [0, 0, 255, 0.1],
-        80: [0, 0, 255, 0]
+        0: 'rgba(255, 255, 255, 1)',
+        1: 'rgba(102, 204, 0, 0.1)',
+        5: 'rgba(102, 204, 0, 0.2)',
+        10: 'rgba(102, 204, 0, 0.3)',
+        15: 'rgba(102, 204, 0, 0.4)',
+        20: 'rgba(102, 204, 0, 0.5)',
+        25: 'rgba(102, 204, 0, 0.6)',
+        30: 'rgba(102, 204, 0, 0.7)',
+        35: 'rgba(102, 204, 0, 0.8)',
+        40: 'rgba(102, 204, 0, 0.9)',
+        45: 'rgba(102, 204, 0, 1)'
     };
 
     // Getters
@@ -46,6 +55,10 @@ class Cell {
         this.traversable = value;
     }
 
+    setPath(value) {
+        this.path = value;
+    }
+
     setStart() {
         this.isWall = false;
         this.isStart = true;
@@ -56,13 +69,32 @@ class Cell {
         this.isEnd = true;
     }
 
+    increaseStage() {
+        if (!this.traversable) {
+            this.stage++;
+        }
+    }
+
     display() {
+        this.determineColour();
+        square(this.offsetX, this.offsetY, this.size);
+    }
+
+    determineColour() {
         // Display different colour based on traversable and
         // other variables (yet to be defined)
         if (this.traversable) {
             fill(255, 255, 255);
         } else {
-            fill(0, 0, 255); 
+            if (this.stage in Cell.stages) {
+                this.currentColour = Cell.stages[this.stage];
+            }
+
+            fill(this.currentColour);
+        }
+
+        if (this.path) {
+            fill(0, 0, 255);
         }
 
         if (this.isStart) {
@@ -70,14 +102,12 @@ class Cell {
         }
 
         if (this.isEnd) {
-            fill(0, 255, 0);
+            fill(237, 217, 16);
         }
 
         if (this.isWall) {
             fill(0, 0, 0);
         }
-
-        square(this.offsetX, this.offsetY, this.size);
     }
 
     toString() {
