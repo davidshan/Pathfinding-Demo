@@ -35,7 +35,7 @@ function draw() {
         searchAStar(goal);
     } else {
         if (pathExists) {
-            colorPath(goal);
+            colourPath(goal);
         } else {
             console.log('No path exists!');
         }
@@ -157,7 +157,7 @@ function searchAStar(end) {
     }
 }
 
-function colorPath(node) {
+function colourPath(node) {
     let curr = node;
 
     while (curr != null) {
