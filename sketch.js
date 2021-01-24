@@ -22,18 +22,18 @@ let start = end = null;
 /* CORE DRAWING FUNCTIONS (p5.js) */
 function setup() {
     createCanvas(2000, 2000);
-    initGrid();
     frameRate(30);
+    initGrid();
 
     chooseEnds();
     //console.log(grid);
 }
 
 function draw() {
+    // Update state of the grid and handle 'finish' conditions
     if (!finished) {
         searchAStar(goal);
     } else {
-        //console.log('finished!');
         if (pathExists) {
             colorPath(goal);
         } else {
@@ -41,9 +41,9 @@ function draw() {
         }
 
         noLoop();
-        
     }
 
+    // Render the grid
     displayGrid();
 }
 
@@ -110,8 +110,9 @@ function dfs() {
         newY = directions[i][1] + Math.floor(currCell.offsetY / CELLSIZE);
 
         if ( (0 <= newX) && (newX < GRIDSIZE) && (0 <= newY) && (newY < GRIDSIZE)
-                && (grid[newY][newX].isTraversable())) {
+                && (grid[newY][newX].isTraversable()) && (!grid[newY][newX].isWall) ) {
             stack.push(grid[newY][newX]);
+            parents[grid[newY][newX]] = currCell;
         }
     }
 }
@@ -124,10 +125,10 @@ function searchAStar(end) {
 
     const q = frontier.pop();
 
-    if (q.toString() == end.toString()) {
+    if (q == end) {
         finished = true;
         pathExists = true;
-        return costs[q.toString()];
+        return costs[q];
     }
 
     for (let i = 0; i < directions.length; i++) {
@@ -139,14 +140,14 @@ function searchAStar(end) {
 
             // todo: if successor in closed then skip
 
-            newCost = costs[q.toString()] + 1; // todo: underlying graph costs data structure
+            newCost = costs[q] + 1; // todo: underlying graph costs data structure
 
-            if ( (!(successor.toString() in costs) || (newCost < costs[successor.toString()]))
+            if ( (!(successor in costs) || (newCost < costs[successor]))
                     && (!successor.isWall) ) {
-                costs[successor.toString()] = newCost;
+                costs[successor] = newCost;
                 priority = newCost + manhattanDistance([newX, newY], [end.x, end.y]);
                 frontier.push(successor, priority);
-                parents[successor.toString()] = q;
+                parents[successor] = q;
             }
 
             q.setTraversed(false);
@@ -158,12 +159,12 @@ function colorPath(node) {
     let curr = node;
 
     while (curr != null) {
-        if (!(curr.toString() in parents)) {
+        if (!(curr in parents)) {
             throw Error("Not a valid path", "coordinates:", curr);
         }
 
         curr.setPath(true);
-        curr = parents[curr.toString()];
+        curr = parents[curr];
     }
 }
 
