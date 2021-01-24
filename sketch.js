@@ -1,5 +1,5 @@
-const CELLSIZE = 32;
-const GRIDSIZE = 20;
+const CELLSIZE = 16;
+const GRIDSIZE = 40;
 
 const grid = new Array();
 
@@ -76,8 +76,8 @@ function chooseEnds() {
     stack.push(grid[2][3]);
 
     grid[2][3].setStart();
-    grid[10][10].setEnd();
-    goal = grid[10][10];
+    grid[GRIDSIZE - 3][GRIDSIZE - 3].setEnd();
+    goal = grid[GRIDSIZE - 3][GRIDSIZE - 3];
     start = grid[2][3];
 
     costs[start] = 0;
