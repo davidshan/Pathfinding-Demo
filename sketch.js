@@ -60,13 +60,13 @@ function displayGrid() {
 // TODO: clean up code a bit
 function initGrid() {
     for (i = 0; i < GRIDSIZE; i++) {
-        row = new Array();
+        const row = new Array();
+        const posY = i * CELLSIZE;
+
         grid.push(row);
 
-        posY = i * CELLSIZE;
-
         for (j = 0; j < GRIDSIZE; j++) {
-            posX = j * CELLSIZE;
+            const posX = j * CELLSIZE;
             row.push(new Cell(posX, posY, CELLSIZE, true));
         }
     }
@@ -89,28 +89,27 @@ function chooseEnds() {
 /* SEARCH FUNCTIONS */
 function dfs() {
     if (stack.length == 0) {
-        // the node is unreachable (we've exhausted all of our options)
+        // the goal is unreachable (we've exhausted all of our options)
         finished = true;
         return null;
     }
 
     currCell = stack.pop();
 
-    if (currCell.isEnd) {
+    if (currCell.isEnd()) {
         finished = true;
         pathExists = true;
         return null;
     }
 
-    currCell.setTraversed(false);
+    currCell.setTraversable(false);
     //visited[currCell.toString()] = true;
 
     for (let i = 0; i < directions.length; i++) {
-        newX = directions[i][0] + Math.floor(currCell.offsetX / CELLSIZE);
-        newY = directions[i][1] + Math.floor(currCell.offsetY / CELLSIZE);
+        const newX = directions[i][0] + Math.floor(currCell.offsetX / CELLSIZE);
+        const newY = directions[i][1] + Math.floor(currCell.offsetY / CELLSIZE);
 
-        if ( (0 <= newX) && (newX < GRIDSIZE) && (0 <= newY) && (newY < GRIDSIZE)
-                && (grid[newY][newX].isTraversable()) && (!grid[newY][newX].isWall) ) {
+        if ( withinGridBounds(newX, newY) && (grid[newY][newX].isTraversable()) ) {
             stack.push(grid[newY][newX]);
             parents[grid[newY][newX]] = currCell;
         }
@@ -125,32 +124,35 @@ function searchAStar(end) {
 
     const q = frontier.pop();
 
+    // Win condition
     if (q == end) {
         finished = true;
         pathExists = true;
         return costs[q];
     }
 
+    // Expand successors to current node
     for (let i = 0; i < directions.length; i++) {
         const newX = directions[i][0] + q.x;
         const newY = directions[i][1] + q.y;
 
-        if ( (0 <= newX) && (newX < GRIDSIZE) && (0 <= newY) && (newY < GRIDSIZE) ) {
+        if (withinGridBounds(newX, newY)) {
             const successor = grid[newY][newX];
+            const newCost = costs[q] + 1;
+            // todo: underlying graph costs data structure
 
-            // todo: if successor in closed then skip
+            if ( (!(successor in costs) || (newCost < costs[successor]) )
+                    && (successor.isTraversable()) ) {
 
-            newCost = costs[q] + 1; // todo: underlying graph costs data structure
+                const heuristic = manhattanDistance([newX, newY], [end.x, end.y]);
+                const priority = newCost + heuristic;
 
-            if ( (!(successor in costs) || (newCost < costs[successor]))
-                    && (!successor.isWall) ) {
                 costs[successor] = newCost;
-                priority = newCost + manhattanDistance([newX, newY], [end.x, end.y]);
                 frontier.push(successor, priority);
                 parents[successor] = q;
             }
 
-            q.setTraversed(false);
+            q.setTraversable(false);
         }
     }
 }
@@ -175,6 +177,15 @@ function increaseStages() {
         }
     }
 }
+
+function withinGridBounds(x, y) {
+    return ( (0 <= x)
+        && (x < GRIDSIZE)
+        && (0 <= y)
+        && (y < GRIDSIZE)
+    );
+}
+
 /* HEURISTIC FUNCTIONS (for A* search) */
 function euclideanDistance(start, end) {
     x0 = start[0], x1 = end[0];

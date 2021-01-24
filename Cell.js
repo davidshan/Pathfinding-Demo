@@ -5,11 +5,11 @@ class Cell {
         this.size = size;
         this.traversable = traversable;
         this.path = false;
-        this.isWall = Math.random() < 0.3;
+        this.wall = Math.random() < 0.3;
         this.stage = 0;
 
-        this.isStart = false;
-        this.isEnd = false;
+        this.start = false;
+        this.end = false;
 
         this.x = offsetX / Math.floor(size);
         this.y = offsetY / Math.floor(size);
@@ -35,23 +35,23 @@ class Cell {
 
     // Getters
     isTraversable() {
-        return this.traversable;
+        return this.traversable && !this.wall;
     }
 
-/*     isWall() {
-        return this.isWall;
+    isWall() {
+        return this.wall;
     }
 
     isStart() {
-        return this.isStart;
+        return this.start;
     }
 
     isEnd() {
-        return this.isEnd;
-    } */
+        return this.end;
+    }
 
     // Setters
-    setTraversed(value) {
+    setTraversable(value) {
         this.traversable = value;
     }
 
@@ -60,13 +60,13 @@ class Cell {
     }
 
     setStart() {
-        this.isWall = false;
-        this.isStart = true;
+        this.wall = false;
+        this.start = true;
     }
 
     setEnd() {
-        this.isWall = false;
-        this.isEnd = true;
+        this.wall = false;
+        this.end = true;
     }
 
     increaseStage() {
@@ -97,15 +97,15 @@ class Cell {
             fill(0, 0, 255);
         }
 
-        if (this.isStart) {
+        if (this.start) {
             fill(255, 0, 0);
         }
 
-        if (this.isEnd) {
+        if (this.end) {
             fill(237, 217, 16);
         }
 
-        if (this.isWall) {
+        if (this.wall) {
             fill(0, 0, 0);
         }
     }
@@ -113,29 +113,4 @@ class Cell {
     toString() {
         return this.x + ", " + this.y;
     }
-/*     // TODO
-    constructor(colour) {
-
-    }
-
-    // TODO
-    constructor(isWall) {
-
-    } */
-/* 
-    fillColour() {
-
-    }
-
-    setTraversed() {
-
-    }
-
-    isTraversable() {
-        return this.traversable;
-    }
-
-    draw() {
-
-    } */
 }
