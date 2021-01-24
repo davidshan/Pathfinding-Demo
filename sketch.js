@@ -147,8 +147,9 @@ function searchAStar(end) {
                 priority = newCost + manhattanDistance([newX, newY], [end.x, end.y]);
                 frontier.push(successor, priority);
                 parents[successor.toString()] = q;
-                q.setTraversed(false);
-            } 
+            }
+
+            q.setTraversed(false);
         }
     }
 }
