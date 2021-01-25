@@ -32,7 +32,7 @@ function setup() {
 function draw() {
     // Update state of the grid and handle 'finish' conditions
     if (!finished) {
-        searchAStar(goal);
+        searchAStar(goal, manhattanDistance);
     } else {
         if (pathExists) {
             colourPath(goal);
@@ -116,7 +116,7 @@ function dfs() {
     }
 }
 
-function searchAStar(end) {
+function searchAStar(end, heuristic) {
     if (frontier.length() == 0) {
         finished = true;
         return null;
@@ -144,8 +144,8 @@ function searchAStar(end) {
             if ( (!(successor in costs) || (newCost < costs[successor]) )
                     && (successor.isTraversable()) ) {
 
-                const heuristic = manhattanDistance([newX, newY], [end.x, end.y]);
-                const priority = newCost + heuristic;
+                const heuristicValue = heuristic([newX, newY], [end.x, end.y]);
+                const priority = newCost + heuristicValue;
 
                 costs[successor] = newCost;
                 frontier.push(successor, priority);
@@ -199,4 +199,8 @@ function manhattanDistance(start, end) {
     y0 = start[1], y1 = end[1];
 
     return Math.abs(x0 - x1) + Math.abs(y0 - y1);
+}
+
+function zeroHeuristic(start, end) {
+    return 0;
 }
