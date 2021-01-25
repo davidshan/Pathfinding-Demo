@@ -15,7 +15,6 @@ const directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const stack = [];
 let finished = false;
 let pathExists = false;
-let currCell = null;
 
 let start = end = null;
 
@@ -94,7 +93,7 @@ function dfs() {
         return null;
     }
 
-    currCell = stack.pop();
+    const currCell = stack.pop();
 
     if (currCell.isEnd()) {
         finished = true;
