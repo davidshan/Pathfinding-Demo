@@ -21,7 +21,7 @@ let start = end = null;
 /* CORE DRAWING FUNCTIONS (p5.js) */
 function setup() {
     createCanvas(2000, 2000);
-    frameRate(30);
+    frameRate(60);
     initGrid();
 
     chooseEnds();
@@ -29,19 +29,7 @@ function setup() {
 }
 
 function draw() {
-    // Update state of the grid and handle 'finish' conditions
-    if (!finished) {
-        searchAStar(goal, manhattanDistance);
-    } else {
-        if (pathExists) {
-            colourPath(goal);
-        } else {
-            console.log('No path exists!');
-        }
-
-        noLoop();
-    }
-
+    updateGridState();
     // Render the grid
     displayGrid();
 }
@@ -183,6 +171,21 @@ function withinGridBounds(x, y) {
         && (0 <= y)
         && (y < GRIDSIZE)
     );
+}
+
+function updateGridState() {
+    // Advance the search, and handle 'finish' conditions
+    if (!finished) {
+        searchAStar(goal, manhattanDistance);
+    } else {
+        if (pathExists) {
+            colourPath(goal);
+        } else {
+            console.log('No path exists!');
+        }
+
+        noLoop();
+    }
 }
 
 /* HEURISTIC FUNCTIONS (for A* search) */
