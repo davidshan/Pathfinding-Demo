@@ -11,8 +11,8 @@ class Cell {
         this.start = false;
         this.end = false;
 
-        this.x = offsetX / Math.floor(size);
-        this.y = offsetY / Math.floor(size);
+        this.x = Math.floor(offsetX / size);
+        this.y = Math.floor(offsetY / size);
 
         this.currentColour = Cell.stages[0];
 
