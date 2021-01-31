@@ -37,6 +37,13 @@ function draw() {
     displayGrid();
 }
 
+// Handles initial mouse clicking, whereas mouseDragged()
+// only triggers when the mouse is dragged
+// A bit hacky, but it gets them both to have the same behaviour.
+function mousePressed() {
+    mouseDragged();
+}
+
 function mouseDragged() {
     for (i = 0; i < GRIDSIZE; i++) {
         for (j = 0; j < GRIDSIZE; j++) {
