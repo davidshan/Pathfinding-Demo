@@ -113,4 +113,37 @@ class Cell {
     toString() {
         return this.x + ", " + this.y;
     }
+
+    clicked(typeOfCell) {
+        // todo: use enums to denote walls, traversed, etc
+        if (this.mouseOnCell()) {
+            //console.log(mouseX, this.offsetX, this.offsetX + this.size, mouseY, this.offsetY, this.offsetY + this.size);
+            //console.log('clicked', this.y, this.x);
+            switch(typeOfCell) {
+
+                case 0: // Empty Cell
+                    this.traversable = true;
+                    this.wall = false;
+                    this.start = false;
+                    this.end = false;
+                    break;
+
+                case 1: // Wall
+                    this.wall = true;
+                    break;
+
+                default:
+                    console.log('No match in switch statement!:', typeOfCell);
+                    break;
+            }
+        }
+    }
+
+    mouseOnCell() {
+        return ( (mouseX >= this.offsetX)
+            && (mouseX < this.offsetX + this.size)
+            && (mouseY >= this.offsetY)
+            && (mouseY < this.offsetY + this.size)
+        );
+    }
 }

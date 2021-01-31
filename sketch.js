@@ -13,6 +13,7 @@ const parents = {};
 // DFS (or general) search variables
 const directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const stack = [];
+let beginSearch = false;
 let finished = false;
 let pathExists = false;
 
@@ -29,9 +30,19 @@ function setup() {
 }
 
 function draw() {
-    updateGridState();
+    if (beginSearch) {
+        updateGridState();
+    }
     // Render the grid
     displayGrid();
+}
+
+function mouseDragged() {
+    for (i = 0; i < GRIDSIZE; i++) {
+        for (j = 0; j < GRIDSIZE; j++) {
+            grid[i][j].clicked(1);
+        }
+    }
 }
 
 /* HELPER FUNCTIONS */
