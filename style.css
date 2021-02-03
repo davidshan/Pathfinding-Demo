@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    font-family: "Mulish";
+    text-align: center;
+}
+
+#canvas-holder {
+    text-align: center;
+    font-family: "Raleway";
+    max-width: 650px;
+    max-height: 750px;
+    margin: auto;
+}

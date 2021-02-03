@@ -21,12 +21,20 @@ let start = end = null;
 
 /* CORE DRAWING FUNCTIONS (p5.js) */
 function setup() {
-    createCanvas(2000, 2000);
+    setupCanvas();
+
     frameRate(60);
     initGrid();
 
     chooseEnds();
     //console.log(grid);
+}
+
+function setupCanvas() {
+    const widthInPixels = CELLSIZE * GRIDSIZE;
+    const canvas = createCanvas(widthInPixels, widthInPixels);
+
+    canvas.parent('canvas-holder');
 }
 
 function draw() {
