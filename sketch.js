@@ -86,16 +86,34 @@ function setupCanvas() {
 }
 
 function chooseEnds() {
-    stack.push(grid[2][3]);
+    setAsStart(3, 2);
+    setAsGoal(GRIDSIZE - 3, GRIDSIZE - 3);
+}
 
-    grid[2][3].setStart();
-    grid[GRIDSIZE - 3][GRIDSIZE - 3].setEnd();
-    goal = grid[GRIDSIZE - 3][GRIDSIZE - 3];
-    start = grid[2][3];
+function setAsStart(x, y) {
+    if (!withinGridBounds(x, y)) {
+        throw new Error('Specified start is not within grid bounds');
+    }
 
+    start = grid[y][x];
     costs[start] = 0;
     parents[start] = null;
+    start.setStart();
+
+    // A Star Search
     frontier.push(start, 0);
+    // Other searches (DFS, BFS, etc)
+    stack.push(start);
+}
+
+function setAsGoal(x, y) {
+    // TODO: see if goal == start
+    if (!withinGridBounds(x, y)) {
+        throw new Error('Specified goal is not within grid bounds');
+    }
+
+    goal = grid[y][x];
+    goal.setEnd();
 }
 
 
