@@ -30,13 +30,6 @@ function setup() {
     //console.log(grid);
 }
 
-function setupCanvas() {
-    const widthInPixels = CELLSIZE * GRIDSIZE;
-    const canvas = createCanvas(widthInPixels, widthInPixels);
-
-    canvas.parent('canvas-holder');
-}
-
 function draw() {
     if (beginSearch) {
         updateGridState();
@@ -83,6 +76,13 @@ function initGrid() {
             row.push(new Cell(posX, posY, CELLSIZE, true));
         }
     }
+}
+
+function setupCanvas() {
+    const widthInPixels = CELLSIZE * GRIDSIZE;
+    const canvas = createCanvas(widthInPixels, widthInPixels);
+
+    canvas.parent('canvas-holder');
 }
 
 function chooseEnds() {

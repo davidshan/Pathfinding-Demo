@@ -4,9 +4,10 @@ body {
     text-align: center;
 }
 
+/* TODO: do this programatically (js) in case we want to resize
+the grid to something else, other than what we currently have*/
 #canvas-holder {
     text-align: center;
-    font-family: "Raleway";
     max-width: 650px;
     max-height: 750px;
     margin: auto;
